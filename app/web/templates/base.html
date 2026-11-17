@@ -20,7 +20,7 @@
   </nav>
   <div class="status">
     <span class="pill {{ 'ok' if llm_enabled else 'warn' }}" title="Summaries use OpenAI when a key is set; otherwise a local extractive summariser">
-      {{ 'OpenAI on' if llm_enabled else 'Extractive mode' }}</span>
+      {{ 'LLM summaries on' if llm_enabled else 'Extractive mode' }}</span>
     <span class="pill neutral">{{ db_kind }}</span>
   </div>
 </header>

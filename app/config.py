@@ -29,6 +29,8 @@ class Settings:
     database_url: str = field(default_factory=lambda: _normalise_db_url(os.getenv("DATABASE_URL") or _default_db_url()))
     openai_api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
     openai_model: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-4o-mini"))
+    # Optional OpenAI-compatible endpoint, e.g. Ollama: http://localhost:11434/v1 (OPENAI_MODEL=qwen2.5:3b)
+    openai_base_url: str = field(default_factory=lambda: os.getenv("OPENAI_BASE_URL", ""))
     fetch_full_articles: bool = field(default_factory=lambda: os.getenv("FETCH_FULL_ARTICLES", "false").lower() == "true")
     request_timeout: float = field(default_factory=lambda: float(os.getenv("REQUEST_TIMEOUT", "10")))
     max_articles_per_feed: int = field(default_factory=lambda: int(os.getenv("MAX_ARTICLES_PER_FEED", "20")))
@@ -40,7 +42,7 @@ class Settings:
 
     @property
     def llm_enabled(self) -> bool:
-        return bool(self.openai_api_key)
+        return bool(self.openai_api_key or self.openai_base_url)
 
     @property
     def smtp_enabled(self) -> bool:

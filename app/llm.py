@@ -16,7 +16,8 @@ class LLMClient:
             try:
                 from openai import OpenAI
 
-                self._client = OpenAI(api_key=settings.openai_api_key, timeout=30)
+                self._client = OpenAI(api_key=settings.openai_api_key or "not-needed-for-local-endpoint",
+                                      base_url=settings.openai_base_url or None, timeout=120)
             except Exception as exc:  # pragma: no cover - import/config problems
                 log.warning("OpenAI client unavailable: %s", exc)
 

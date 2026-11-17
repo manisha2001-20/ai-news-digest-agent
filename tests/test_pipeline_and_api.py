@@ -111,3 +111,35 @@ def test_profile_create_and_validation(client):
 def test_add_feed_rejects_bad_url(client):
     r = client.post("/feeds", data={"name": "x", "url": "ftp://bad", "category": "t"})
     assert "must start with" in r.text
+
+
+YOUTUBE_ATOM = """<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
+ <title>Example Channel</title>
+ <entry>
+  <id>yt:video:abc123def45</id><yt:videoId>abc123def45</yt:videoId>
+  <title>Gradient descent explained</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=abc123def45"/>
+  <published>2026-11-01T10:00:00+00:00</published>
+  <media:group><media:title>Gradient descent explained</media:title>
+   <media:description>We explain gradient descent and learning rates with simple examples for beginners.</media:description></media:group>
+ </entry>
+</feed>"""
+
+
+def test_youtube_channel_feed_format(tmp_path):
+    f = tmp_path / "yt.xml"
+    f.write_text(YOUTUBE_ATOM, encoding="utf-8")
+    arts = parse_feed(str(f), "YouTube – Example", "youtube")
+    assert len(arts) == 1
+    assert arts[0].link == "https://www.youtube.com/watch?v=abc123def45"
+    assert "gradient descent" in arts[0].summary.lower()
+    assert arts[0].published is not None
+
+
+def test_default_feed_list_has_15_plus_real_sources():
+    import json
+    feeds = json.loads((ROOT / "data" / "feeds.json").read_text(encoding="utf-8"))
+    real = [f for f in feeds if f["url"].startswith("http")]
+    assert len(real) >= 15
+    assert sum("youtube.com/feeds" in f["url"] for f in real) >= 5

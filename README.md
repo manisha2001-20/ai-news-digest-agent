@@ -10,9 +10,9 @@ A multi-agent system that collects news from RSS feeds, summarises each article,
 
 | Feature | How it works |
 |---|---|
-| Multi-feed RSS collection | `feedparser` over any number of RSS/Atom feeds. Duplicates are skipped by link. A broken feed is logged, and the rest still run. |
+| Multi-feed RSS collection | `feedparser` over any number of RSS/Atom feeds. The default list has **18 real sources**: BBC, NASA, MIT Technology Review, TechCrunch, Ars Technica, arXiv cs.AI, Hugging Face and others, plus **5 YouTube channel feeds** (3Blue1Brown, StatQuest, Two Minute Papers, sentdex, freeCodeCamp). There are also 4 offline sample feeds. Duplicates are skipped by link. A broken feed is logged, and the rest still run. |
 | Article extraction | Optional full-page extraction with BeautifulSoup (`FETCH_FULL_ARTICLES=true`). Falls back to the RSS description. |
-| **Summarizer agent** | Uses the OpenAI Chat Completions API when `OPENAI_API_KEY` is set. Otherwise it uses a local extractive summariser (TF-IDF centroid). Each summary records which method produced it. |
+| **Summarizer agent** | Uses the OpenAI Chat Completions API when `OPENAI_API_KEY` is set, or any OpenAI-compatible endpoint (`OPENAI_BASE_URL`, e.g. local Ollama). Otherwise it uses a local extractive summariser (TF-IDF centroid). Each summary records which method produced it. |
 | **Relevance agent** | Scores each article against the reader's interests using TF-IDF cosine similarity plus keyword overlap, giving a score from 0 to 1. |
 | **Personalization agent** | Learns category and keyword weights from feedback. Ranks articles by relevance, learned preference and recency (exponential decay). Caps stories per source and removes near-duplicate titles. |
 | **Email agent** | Renders a responsive HTML email. Sends via SMTP if configured; otherwise stores a preview you can view in the UI. |
@@ -35,7 +35,7 @@ ai-news-digest-agent/
 │   ├── pipeline.py        # orchestrator for the agents
 │   └── text_utils.py
 ├── data/
-│   ├── feeds.json         # default feeds (4 synthetic local + 4 real public feeds)
+│   ├── feeds.json         # default feeds (4 synthetic local + 18 real, incl. 5 YouTube channels)
 │   └── sample_feeds/      # SYNTHETIC demo RSS files (not real news)
 ├── docs/ARCHITECTURE.md, docs/screenshots/
 ├── scripts/make_sample_feeds.py
@@ -76,7 +76,7 @@ docker compose up --build
 
 Push the repo to GitHub, then go to Render and choose **New → Blueprint** and select the repo. `render.yaml` creates the web service and a PostgreSQL database. Set `OPENAI_API_KEY` in the Render dashboard.
 
-> Deployment status: the Docker/Render configuration is included but has **not** been deployed by the author yet. Docker was not available on the development machine, so `docker compose` has not been run here.
+> **Deployment status:** the Docker and Render configuration is included and structurally validated, but it has **not been executed** yet: Docker was not available on the development laptop and no Render account was connected. PostgreSQL support *is* tested against a real PostgreSQL 16 server (see below). Step-by-step instructions are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## API
 
@@ -96,7 +96,23 @@ Interactive docs are at `/docs` (Swagger UI).
 pytest
 ```
 
-24 tests cover the agents, RSS parsing, error handling (missing feed, invalid feedback, unknown user, bad URL), pipeline idempotency, digest generation, and every web page and API endpoint. They use the synthetic local feeds and a temporary SQLite database, so they need no network, API key or Postgres.
+The tests cover:
+- the agents and RSS parsing, including the YouTube channel feed format;
+- error handling (missing feed, invalid feedback, unknown user, bad URL);
+- pipeline idempotency and digest generation;
+- every web page and API endpoint;
+- the LLM path (mocked OpenAI client, with a fallback when the API fails).
+
+By default they use the synthetic local feeds and a temporary SQLite database, so they need no network or API key.
+
+Optional extras:
+
+```bash
+pip install -r requirements-dev.txt   # embedded PostgreSQL (pgserver), no Docker needed
+pytest                                # also runs tests/test_postgres_integration.py against real PostgreSQL
+```
+
+`tests/test_llm_agents.py::test_live_summary_via_openai_compatible_endpoint` also runs a live LLM summary when a local Ollama server is reachable. On the author's machine all **34 tests pass**, including PostgreSQL and the live LLM test.
 
 ## Screenshots
 

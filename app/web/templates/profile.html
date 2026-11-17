@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Profile · AI News Digest{% endblock %}
+{% block content %}
+<h1>Reader profile</h1>
+<p class="muted">Interests drive the relevance agent. Feedback on the dashboard tunes the personalisation agent.</p>
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+<div class="layout">
+  <form class="panel form" method="post" action="/profile">
+    <input type="hidden" name="user_id" value="{{ user.id if user else '' }}">
+    <label>Name<input name="name" required value="{{ user.name if user else '' }}"></label>
+    <label>Email<input name="email" type="email" required value="{{ user.email if user else '' }}"></label>
+    <label>Interests <span class="muted small">(comma or one per line)</span>
+      <textarea name="interests" rows="5">{{ (user.interests|join(', ')) if user else '' }}</textarea></label>
+    <label>Stories per digest<input name="digest_size" type="number" min="3" max="20" value="{{ user.digest_size if user else 8 }}"></label>
+    <div class="row"><button class="btn primary">Save profile</button>
+      <a class="btn" href="/profile?new=1" onclick="document.cookie='user_id=; Max-Age=0'; ">New profile</a></div>
+  </form>
+  <aside class="panel">
+    <h3>All profiles</h3>
+    {% for u in users %}<div class="pref"><a href="/?user={{ u.id }}">{{ u.name }}</a><span class="muted small">{{ u.interests|length }} interests</span></div>{% endfor %}
+  </aside>
+</div>
+{% endblock %}

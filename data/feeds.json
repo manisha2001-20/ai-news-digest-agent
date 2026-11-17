@@ -1,0 +1,10 @@
+[
+  {"name": "Sample Technology (synthetic)", "url": "data/sample_feeds/technology.xml", "category": "technology"},
+  {"name": "Sample Science (synthetic)", "url": "data/sample_feeds/science.xml", "category": "science"},
+  {"name": "Sample Business (synthetic)", "url": "data/sample_feeds/business.xml", "category": "business"},
+  {"name": "Sample Sports (synthetic)", "url": "data/sample_feeds/sports.xml", "category": "sports"},
+  {"name": "BBC Technology", "url": "https://feeds.bbci.co.uk/news/technology/rss.xml", "category": "technology"},
+  {"name": "BBC Science & Environment", "url": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml", "category": "science"},
+  {"name": "NASA News Releases", "url": "https://www.nasa.gov/news-release/feed/", "category": "science"},
+  {"name": "The Hindu – Technology", "url": "https://www.thehindu.com/sci-tech/technology/feeder/default.rss", "category": "technology"}
+]

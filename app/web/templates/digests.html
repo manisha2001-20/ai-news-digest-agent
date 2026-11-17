@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Digests · AI News Digest{% endblock %}
+{% block content %}
+<div class="hero">
+  <div><h1>Email digests</h1>
+  <p class="muted">{% if smtp_enabled %}SMTP is configured: digests are emailed and stored here.{% else %}SMTP is not configured, so digests are saved as previews (set SMTP_* in .env to send).{% endif %}</p></div>
+  <form method="post" action="/digests"><button class="btn primary">✉ Build digest now</button></form>
+</div>
+<section class="panel">
+  <table class="table">
+    <thead><tr><th>#</th><th>Subject</th><th>Reader</th><th>Stories</th><th>Status</th><th>Created</th></tr></thead>
+    <tbody>
+    {% for d in digests %}
+      <tr><td>{{ d.id }}</td><td><a href="/digests/{{ d.id }}">{{ d.subject }}</a></td><td>{{ names.get(d.user_id, '?') }}</td>
+        <td>{{ d.article_ids|length }}</td>
+        <td><span class="pill {{ 'ok' if d.status == 'sent' else ('warn' if d.status == 'failed' else 'neutral') }}">{{ d.status }}</span></td>
+        <td class="small">{{ d.created_at.strftime('%d %b %Y %H:%M') }}</td></tr>
+    {% else %}<tr><td colspan="6" class="muted">No digests yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

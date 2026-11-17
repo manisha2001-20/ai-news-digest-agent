@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+<title>Sample Science News (synthetic)</title>
+<link>https://example.com/</link>
+<description>Synthetic demo feed generated for offline use. Not real news.</description>
+<item>
+<title>Space agency tests reusable lunar lander engine</title>
+<link>https://example.com/science/space-agency-tests-reusable-lunar-lander-engine</link>
+<description>Engineers completed a series of test firings for an engine intended for a reusable lunar lander. The tests evaluated restart capability and thermal performance. Further trials are scheduled before a full system test. The programme aims to support long-term space exploration.</description>
+<pubDate>Tue, 17 Nov 2026 11:10:10 +0000</pubDate>
+</item>
+<item>
+<title>Telescope captures detailed images of distant galaxy cluster</title>
+<link>https://example.com/science/telescope-captures-detailed-images-of-distant-galaxy-cluster</link>
+<description>Astronomers released images of a distant galaxy cluster showing gravitational lensing. The data will help researchers study dark matter distribution. The observations were made in infrared wavelengths. Scientists plan follow-up spectroscopy.</description>
+<pubDate>Tue, 17 Nov 2026 06:10:10 +0000</pubDate>
+</item>
+<item>
+<title>Researchers map climate impact on monsoon rainfall</title>
+<link>https://example.com/science/researchers-map-climate-impact-on-monsoon-rainfall</link>
+<description>A climate study analysed decades of rainfall records to understand changes in monsoon patterns. The researchers found increased variability in several regions. They used statistical models combined with satellite data. The authors call for improved local forecasting.</description>
+<pubDate>Tue, 17 Nov 2026 01:10:10 +0000</pubDate>
+</item>
+<item>
+<title>Battery recycling method recovers more lithium</title>
+<link>https://example.com/science/battery-recycling-method-recovers-more-lithium</link>
+<description>Chemists described a recycling process that recovers a higher share of lithium from used batteries. The method uses lower temperatures than conventional approaches. The team is working with industry on pilot plants. Recycling could reduce pressure on mining.</description>
+<pubDate>Mon, 16 Nov 2026 20:10:10 +0000</pubDate>
+</item>
+</channel></rss>

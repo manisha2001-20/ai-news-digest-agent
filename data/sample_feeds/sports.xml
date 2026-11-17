@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+<title>Sample Sports News (synthetic)</title>
+<link>https://example.com/</link>
+<description>Synthetic demo feed generated for offline use. Not real news.</description>
+<item>
+<title>National cricket team announces squad for upcoming series</title>
+<link>https://example.com/sports/national-cricket-team-announces-squad-for-upcoming-series</link>
+<description>Selectors named a squad that includes three uncapped players. The coach said the series is a chance to test bench strength. Training camps begin next week. The first match is scheduled at the end of the month.</description>
+<pubDate>Tue, 17 Nov 2026 11:10:10 +0000</pubDate>
+</item>
+<item>
+<title>Marathon organisers introduce sustainability measures</title>
+<link>https://example.com/sports/marathon-organisers-introduce-sustainability-measures</link>
+<description>Organisers of a city marathon announced reusable cups and better waste sorting. Volunteers will guide runners at recycling points. The event expects record participation. Registration closes soon.</description>
+<pubDate>Tue, 17 Nov 2026 06:10:10 +0000</pubDate>
+</item>
+</channel></rss>

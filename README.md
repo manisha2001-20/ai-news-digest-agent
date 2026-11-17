@@ -1,0 +1,116 @@
+# Personalized AI News Digest Agent
+
+A multi-agent system that collects news from RSS feeds, summarises each article, ranks stories by a reader's interests, learns from 👍/👎 feedback, and produces a personalised HTML email digest. It has a web dashboard and a JSON API.
+
+**Tech stack:** Python 3.11 · FastAPI · SQLAlchemy 2 · PostgreSQL (SQLite fallback) · OpenAI API (optional) · feedparser · scikit-learn · Jinja2 · Docker · Render
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+## Features
+
+| Feature | How it works |
+|---|---|
+| Multi-feed RSS collection | `feedparser` over any number of RSS/Atom feeds. Duplicates are skipped by link. A broken feed is logged, and the rest still run. |
+| Article extraction | Optional full-page extraction with BeautifulSoup (`FETCH_FULL_ARTICLES=true`). Falls back to the RSS description. |
+| **Summarizer agent** | Uses the OpenAI Chat Completions API when `OPENAI_API_KEY` is set. Otherwise it uses a local extractive summariser (TF-IDF centroid). Each summary records which method produced it. |
+| **Relevance agent** | Scores each article against the reader's interests using TF-IDF cosine similarity plus keyword overlap, giving a score from 0 to 1. |
+| **Personalization agent** | Learns category and keyword weights from feedback. Ranks articles by relevance, learned preference and recency (exponential decay). Caps stories per source and removes near-duplicate titles. |
+| **Email agent** | Renders a responsive HTML email. Sends via SMTP if configured; otherwise stores a preview you can view in the UI. |
+| Database | PostgreSQL through SQLAlchemy ORM (feeds, articles, profiles, feedback, digests, pipeline runs). Uses SQLite automatically when no `DATABASE_URL` is set. |
+| Web interface | Dashboard, Digests, Feeds and Profile pages. Responsive, with light and dark themes. |
+| Deployment | `Dockerfile`, `docker-compose.yml` (app + Postgres) and a `render.yaml` blueprint. |
+
+## Project structure
+
+```
+ai-news-digest-agent/
+├── app/
+│   ├── agents/            # summarizer.py, relevance.py, personalization.py, email_agent.py
+│   ├── ingestion/         # rss_collector.py, extractor.py
+│   ├── web/               # main.py (FastAPI), templates/, static/
+│   ├── config.py          # env-based settings
+│   ├── database.py        # engine + session handling
+│   ├── models.py          # SQLAlchemy ORM models
+│   ├── llm.py             # OpenAI wrapper (never raises; enables fallback)
+│   ├── pipeline.py        # orchestrator for the agents
+│   └── text_utils.py
+├── data/
+│   ├── feeds.json         # default feeds (4 synthetic local + 4 real public feeds)
+│   └── sample_feeds/      # SYNTHETIC demo RSS files (not real news)
+├── docs/ARCHITECTURE.md, docs/screenshots/
+├── scripts/make_sample_feeds.py
+├── tests/                 # pytest suite (runs fully offline)
+├── Dockerfile, docker-compose.yml, render.yaml
+├── requirements.txt, .env.example, pytest.ini
+```
+
+## Installation (local)
+
+```bash
+git clone https://github.com/manisha2001-20/ai-news-digest-agent.git
+cd ai-news-digest-agent
+python -m venv .venv
+# Windows: .venv\Scripts\activate      macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env        # optional: add OPENAI_API_KEY, DATABASE_URL, SMTP_*
+```
+
+## Running
+
+```bash
+uvicorn app.web.main:app --reload --port 8000
+```
+
+Open http://localhost:8000 and click **Collect news**, then **Build digest**.
+
+The first start creates the database, the default feeds and a "Demo Reader" profile. Without an OpenAI key, the pill in the top bar reads **Extractive mode**.
+
+### With Docker + PostgreSQL
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+### Deploy to Render
+
+Push the repo to GitHub, then go to Render and choose **New → Blueprint** and select the repo. `render.yaml` creates the web service and a PostgreSQL database. Set `OPENAI_API_KEY` in the Render dashboard.
+
+> Deployment status: the Docker/Render configuration is included but has **not** been deployed by the author yet. Docker was not available on the development machine, so `docker compose` has not been run here.
+
+## API
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/api/health` | Health check (DB, LLM and SMTP status) |
+| POST | `/api/run` | Collect feeds and summarise new articles |
+| GET | `/api/users/{id}/feed?k=10` | Ranked articles with score breakdown |
+| POST | `/api/feedback` | `{"user_id":1,"article_id":5,"value":1}` (value must be 1 or -1) |
+| POST | `/api/users/{id}/digest?send=false` | Build (and optionally email) a digest |
+
+Interactive docs are at `/docs` (Swagger UI).
+
+## Tests
+
+```bash
+pytest
+```
+
+24 tests cover the agents, RSS parsing, error handling (missing feed, invalid feedback, unknown user, bad URL), pipeline idempotency, digest generation, and every web page and API endpoint. They use the synthetic local feeds and a temporary SQLite database, so they need no network, API key or Postgres.
+
+## Screenshots
+
+| Dashboard | Feeds | Digest preview |
+|---|---|---|
+| ![](docs/screenshots/dashboard.png) | ![](docs/screenshots/feeds.png) | ![](docs/screenshots/digest.png) |
+
+To retake them: run the app, collect news, build a digest, then capture `/`, `/feeds` and `/digests/1` with your browser's screenshot tool (or `msedge --headless=new --screenshot=out.png --window-size=1400,1000 http://localhost:8000/`).
+
+## Notes and limitations
+
+- Files in `data/sample_feeds/` are **synthetic** and exist only so the app and tests work offline.
+- The extractive fallback picks existing sentences and does not paraphrase. Quality is better with an OpenAI key.
+- Relevance uses TF-IDF, not neural embeddings. This keeps it lightweight and CPU-only.
+- Article text is treated as data: the LLM prompt tells the model to ignore any instructions inside articles.
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the design.

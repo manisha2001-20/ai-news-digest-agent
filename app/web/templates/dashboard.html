@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · AI News Digest{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <h1>Good to see you, {{ user.name }}</h1>
+    <p class="muted">Your feed is ranked by four agents: summariser → relevance → personalisation → email.</p>
+    <div class="chips">{% for i in user.interests %}<span class="chip">{{ i }}</span>{% else %}<a class="chip" href="/profile">+ add interests</a>{% endfor %}</div>
+  </div>
+  <div class="hero-actions">
+    {% if users|length > 1 %}
+    <select onchange="location='/?user='+this.value" aria-label="Switch user">
+      {% for u in users %}<option value="{{ u.id }}" {{ 'selected' if u.id == user.id }}>{{ u.name }}</option>{% endfor %}
+    </select>
+    {% endif %}
+    <form method="post" action="/run" onsubmit="this.querySelector('button').textContent='Collecting…'"><button class="btn">↻ Collect news</button></form>
+    <form method="post" action="/digests"><button class="btn primary">✉ Build digest</button></form>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="stat"><div class="stat-label">Articles stored</div><div class="stat-value">{{ stats.articles }}</div></div>
+  <div class="stat"><div class="stat-label">Active feeds</div><div class="stat-value">{{ stats.feeds }}</div></div>
+  <div class="stat"><div class="stat-label">Digests generated</div><div class="stat-value">{{ stats.digests }}</div></div>
+  <div class="stat"><div class="stat-label">Last collection</div>
+    <div class="stat-value small">{% if stats.last_run %}{{ stats.last_run.started_at.strftime('%d %b %H:%M') }} · +{{ stats.last_run.new_articles }}{% else %}never{% endif %}</div></div>
+</section>
+
+<div class="layout">
+  <section>
+    <h2 class="section-title">Recommended for you</h2>
+    {% if not ranked %}
+      <div class="empty">No articles yet. Click <b>Collect news</b> to pull the configured RSS feeds.</div>
+    {% endif %}
+    <div class="cards">
+    {% for r, a in ranked %}
+      <article class="card" id="art-{{ a.id }}">
+        <div class="card-meta"><span class="tag">{{ a.category }}</span><span class="muted">{{ a.source }}</span>
+          {% if a.published %}<span class="muted">· {{ a.published.strftime('%d %b') }}</span>{% endif %}</div>
+        <h3><a href="{{ a.link }}" target="_blank" rel="noopener">{{ a.title }}</a></h3>
+        <p>{{ a.ai_summary or a.raw_summary }}</p>
+        <div class="score-row">
+          <div class="bar" title="Overall score"><span style="width: {{ (r.score * 100)|round(0) }}%"></span></div>
+          <span class="score">{{ '%.2f'|format(r.score) }}</span>
+        </div>
+        <div class="card-foot">
+          <span class="muted small">relevance {{ '%.2f'|format(r.relevance) }} · preference {{ '%+.2f'|format(r.preference) }} · {{ a.summary_method or 'pending' }}</span>
+          <span class="fb">
+            <button class="icon-btn" onclick="feedback({{ user.id }}, {{ a.id }}, 1, this)" title="More like this">👍</button>
+            <button class="icon-btn" onclick="feedback({{ user.id }}, {{ a.id }}, -1, this)" title="Less like this">👎</button>
+          </span>
+        </div>
+      </article>
+    {% endfor %}
+    </div>
+  </section>
+  <aside class="side">
+    <div class="panel">
+      <h3>Articles by category</h3>
+      {% set maxc = (categories|map(attribute='count')|max) if categories else 1 %}
+      {% for c in categories|sort(attribute='count', reverse=True) %}
+        <div class="hbar"><span class="hbar-label">{{ c.name }}</span>
+          <span class="hbar-track"><span style="width: {{ (c.count / maxc * 100)|round(0) }}%"></span></span>
+          <span class="hbar-val">{{ c.count }}</span></div>
+      {% else %}<p class="muted">No data yet.</p>{% endfor %}
+    </div>
+    <div class="panel">
+      <h3>Learned preferences</h3>
+      {% for cat, w in (user.category_weights or {}).items()|sort(attribute='1', reverse=True) %}
+        <div class="pref"><span>{{ cat }}</span><span class="{{ 'pos' if w > 0 else 'neg' }}">{{ '%+.2f'|format(w) }}</span></div>
+      {% else %}<p class="muted small">Like or dislike stories to teach the personalisation agent.</p>{% endfor %}
+    </div>
+  </aside>
+</div>
+{% endblock %}

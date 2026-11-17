@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Feeds · AI News Digest{% endblock %}
+{% block content %}
+<h1>RSS feeds</h1>
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+<div class="layout">
+  <section class="panel">
+    <table class="table">
+      <thead><tr><th>Name</th><th>Category</th><th>Last fetched</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+      {% for f in feeds %}
+        <tr class="{{ '' if f.active else 'dim' }}">
+          <td><b>{{ f.name }}</b><div class="muted small url">{{ f.url }}</div></td>
+          <td><span class="tag">{{ f.category }}</span></td>
+          <td class="small">{{ f.last_fetched.strftime('%d %b %H:%M') if f.last_fetched else '—' }}</td>
+          <td>{% if f.last_error %}<span class="pill warn" title="{{ f.last_error }}">error</span>{% elif f.last_fetched %}<span class="pill ok">ok</span>{% else %}<span class="pill neutral">new</span>{% endif %}</td>
+          <td><form method="post" action="/feeds/{{ f.id }}/toggle"><button class="btn small">{{ 'Disable' if f.active else 'Enable' }}</button></form></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  <aside>
+    <form class="panel form" method="post" action="/feeds">
+      <h3>Add feed</h3>
+      <label>Name<input name="name" required placeholder="e.g. BBC Technology"></label>
+      <label>RSS URL<input name="url" required placeholder="https://…/rss.xml"></label>
+      <label>Category<input name="category" placeholder="technology"></label>
+      <button class="btn primary">Add feed</button>
+    </form>
+    <div class="panel">
+      <h3>Recent collection runs</h3>
+      {% for r in runs %}
+        <div class="pref"><span class="small">{{ r.started_at.strftime('%d %b %H:%M') }}</span>
+          <span class="small">+{{ r.new_articles }} · {{ r.feeds_ok }} ok{% if r.feeds_failed %} · <span class="neg">{{ r.feeds_failed }} failed</span>{% endif %} · {{ r.duration_s }}s</span></div>
+      {% else %}<p class="muted small">No runs yet.</p>{% endfor %}
+    </div>
+  </aside>
+</div>
+{% endblock %}

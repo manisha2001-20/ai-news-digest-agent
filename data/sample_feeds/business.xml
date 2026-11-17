@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+<title>Sample Business News (synthetic)</title>
+<link>https://example.com/</link>
+<description>Synthetic demo feed generated for offline use. Not real news.</description>
+<item>
+<title>Startups adopt AI assistants for customer support</title>
+<link>https://example.com/business/startups-adopt-ai-assistants-for-customer-support</link>
+<description>Small companies are increasingly using AI assistants to answer routine customer questions. Owners report faster response times but stress the need for human review. Analysts note concerns about accuracy and data privacy. Adoption is highest in e-commerce.</description>
+<pubDate>Tue, 17 Nov 2026 11:10:10 +0000</pubDate>
+</item>
+<item>
+<title>Renewable energy investment rises in the region</title>
+<link>https://example.com/business/renewable-energy-investment-rises-in-the-region</link>
+<description>Investment in solar and wind projects increased over the past year according to an industry report. Lower equipment costs and supportive policy were cited as reasons. Grid storage remains a bottleneck. Several new projects were announced this quarter.</description>
+<pubDate>Tue, 17 Nov 2026 06:10:10 +0000</pubDate>
+</item>
+<item>
+<title>Fintech firms focus on fraud prevention</title>
+<link>https://example.com/business/fintech-firms-focus-on-fraud-prevention</link>
+<description>Financial technology companies are investing in fraud detection systems that analyse transaction patterns. Machine learning models flag unusual activity for review. Regulators encourage transparent decision making. Customers are being educated about common scams.</description>
+<pubDate>Tue, 17 Nov 2026 01:10:10 +0000</pubDate>
+</item>
+</channel></rss>

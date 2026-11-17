@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ digest.subject }}{% endblock %}
+{% block content %}
+<a href="/digests" class="muted">← All digests</a>
+<h1>{{ digest.subject }}</h1>
+<p><span class="pill {{ 'ok' if digest.status == 'sent' else ('warn' if digest.status == 'failed' else 'neutral') }}">{{ digest.status }}</span>
+  {% if digest.error %}<span class="neg small">{{ digest.error }}</span>{% endif %}</p>
+<iframe class="email-frame" src="/digests/{{ digest.id }}/raw" title="Email preview"></iframe>
+{% endblock %}

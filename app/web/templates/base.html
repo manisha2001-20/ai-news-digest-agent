@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}AI News Digest{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="logo">◆</span> AI News Digest <span class="muted">Agent</span></div>
+  <button class="menu-btn" aria-label="Menu" onclick="document.body.classList.toggle('nav-open')">☰</button>
+  <nav class="nav">
+    <a href="/" class="{{ 'active' if active == 'dashboard' }}">Dashboard</a>
+    <a href="/digests" class="{{ 'active' if active == 'digests' }}">Digests</a>
+    <a href="/feeds" class="{{ 'active' if active == 'feeds' }}">Feeds</a>
+    <a href="/profile" class="{{ 'active' if active == 'profile' }}">Profile</a>
+  </nav>
+  <div class="status">
+    <span class="pill {{ 'ok' if llm_enabled else 'warn' }}" title="Summaries use OpenAI when a key is set; otherwise a local extractive summariser">
+      {{ 'OpenAI on' if llm_enabled else 'Extractive mode' }}</span>
+    <span class="pill neutral">{{ db_kind }}</span>
+  </div>
+</header>
+<main class="container">
+  {% block content %}{% endblock %}
+</main>
+<footer class="footer">Personalized AI News Digest Agent · FastAPI · SQLAlchemy · {{ db_kind }}</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>

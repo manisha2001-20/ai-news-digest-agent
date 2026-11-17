@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+<title>Sample Technology News (synthetic)</title>
+<link>https://example.com/</link>
+<description>Synthetic demo feed generated for offline use. Not real news.</description>
+<item>
+<title>Open-source language model tops reasoning benchmark</title>
+<link>https://example.com/technology/open-source-language-model-tops-reasoning-benchmark</link>
+<description>A research group released an open-source language model that scored highly on a public reasoning benchmark. The model was trained with a mixture of synthetic and curated data. Researchers said evaluation on more diverse tasks is still needed. The weights are available under a permissive licence.</description>
+<pubDate>Tue, 17 Nov 2026 11:10:10 +0000</pubDate>
+</item>
+<item>
+<title>Chipmaker unveils energy-efficient AI accelerator</title>
+<link>https://example.com/technology/chipmaker-unveils-energy-efficient-ai-accelerator</link>
+<description>A semiconductor company announced an accelerator designed for running machine learning inference at low power. The company claims improved performance per watt compared with its previous generation. Independent benchmarks have not yet been published. Shipments are planned for next year.</description>
+<pubDate>Tue, 17 Nov 2026 06:10:10 +0000</pubDate>
+</item>
+<item>
+<title>Universities expand machine learning curriculum</title>
+<link>https://example.com/technology/universities-expand-machine-learning-curriculum</link>
+<description>Several engineering colleges are adding courses on machine learning operations and responsible AI. Faculty said students need practical experience deploying models. The new courses include projects on data pipelines and model monitoring. Industry partners will provide guest lectures.</description>
+<pubDate>Tue, 17 Nov 2026 01:10:10 +0000</pubDate>
+</item>
+<item>
+<title>Cybersecurity agencies warn about phishing using deepfake audio</title>
+<link>https://example.com/technology/cybersecurity-agencies-warn-about-phishing-using-deepfake-au</link>
+<description>Security agencies issued guidance about phishing calls that use synthetic voices. Attackers imitate executives to request urgent payments. The guidance recommends verification through a second channel. Organisations are advised to train staff to recognise such requests.</description>
+<pubDate>Mon, 16 Nov 2026 20:10:10 +0000</pubDate>
+</item>
+<item>
+<title>New framework simplifies deploying Python web services</title>
+<link>https://example.com/technology/new-framework-simplifies-deploying-python-web-services</link>
+<description>Developers released a framework update that reduces boilerplate when deploying Python web APIs in containers. The update adds built-in health checks and configuration through environment variables. Early users reported shorter setup times. Documentation includes Docker examples.</description>
+<pubDate>Mon, 16 Nov 2026 15:10:10 +0000</pubDate>
+</item>
+</channel></rss>

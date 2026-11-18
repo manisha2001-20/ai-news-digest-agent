@@ -6,6 +6,15 @@ A multi-agent system that collects news from RSS feeds, summarises each article,
 
 ![Dashboard](docs/screenshots/dashboard.png)
 
+## Problem statement & objectives
+
+Readers follow many news sources and cannot read everything; generic feeds are not ranked by what each reader cares about.
+This project aims to:
+1. collect articles automatically from many RSS/Atom (and YouTube channel) feeds;
+2. summarise each article, with an LLM when available and an offline extractive method otherwise;
+3. rank articles by each reader's stated interests and learn from their 👍/👎 feedback;
+4. deliver the result as a personalised HTML email digest, a web dashboard and a JSON API.
+
 ## Features
 
 | Feature | How it works |
@@ -19,6 +28,16 @@ A multi-agent system that collects news from RSS feeds, summarises each article,
 | Database | PostgreSQL through SQLAlchemy ORM (feeds, articles, profiles, feedback, digests, pipeline runs). Uses SQLite automatically when no `DATABASE_URL` is set. |
 | Web interface | Dashboard, Digests, Feeds and Profile pages. Responsive, with light and dark themes. |
 | Deployment | `Dockerfile`, `docker-compose.yml` (app + Postgres) and a `render.yaml` blueprint. |
+
+## Workflow
+
+1. **Collect:** `rss_collector.py` reads every enabled feed and stores new articles (duplicates skipped by link).
+2. **Summarise:** the summarizer agent writes a summary per article (LLM, or TF-IDF centroid extractive fallback).
+3. **Score:** the relevance agent scores each article against the reader's interests (TF-IDF cosine + keyword overlap).
+4. **Personalise:** the personalization agent combines relevance, weights learned from feedback and recency, caps stories per source and removes near-duplicates.
+5. **Deliver:** the email agent renders the digest as HTML and sends it via SMTP, or stores a preview in the UI.
+
+`app/pipeline.py` orchestrates these steps; every run is recorded in the database.
 
 ## Project structure
 
